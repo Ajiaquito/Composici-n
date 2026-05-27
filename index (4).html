@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galería · Nicolás Rodríguez Granados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f5f4f0;
+      --ink:      #1a1917;
+      --muted:    #8a8880;
+      --accent:   #2d2c29;
+      --line:     rgba(26,25,23,.12);
+      --radius:   2px;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Geist Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 3.5rem 5vw 2.5rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -.5px;
+    }
+
+    .header-left h1 em {
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: .68rem;
+      color: var(--muted);
+      line-height: 1.9;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      padding: 1.2rem 5vw;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: .65rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .filters {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: none;
+      border: 1px solid var(--line);
+      font-family: 'Geist Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: .35rem .8rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    /* ── GALLERY GRID ── */
+    main {
+      flex: 1;
+      padding: 3rem 5vw;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Mosaic accent cells */
+    .card:nth-child(1)  { grid-column: span 2; }
+    .card:nth-child(6)  { grid-column: span 2; }
+
+    @media (max-width: 660px) {
+      .card:nth-child(1),
+      .card:nth-child(6) { grid-column: span 1; }
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #e8e7e2;
+      cursor: pointer;
+      animation: fadeUp .55s ease both;
+    }
+
+    .card:nth-child(1)  { animation-delay: .05s }
+    .card:nth-child(2)  { animation-delay: .10s }
+    .card:nth-child(3)  { animation-delay: .15s }
+    .card:nth-child(4)  { animation-delay: .20s }
+    .card:nth-child(5)  { animation-delay: .25s }
+    .card:nth-child(6)  { animation-delay: .30s }
+    .card:nth-child(7)  { animation-delay: .35s }
+    .card:nth-child(8)  { animation-delay: .40s }
+    .card:nth-child(9)  { animation-delay: .45s }
+    .card:nth-child(10) { animation-delay: .50s }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      aspect-ratio: 4/3;
+      transition: transform .55s cubic-bezier(.25,.46,.45,.94), filter .55s;
+      filter: grayscale(8%);
+    }
+
+    .card:hover img {
+      transform: scale(1.035);
+      filter: grayscale(0%);
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(26,25,23,.72) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity .3s;
+      display: flex;
+      align-items: flex-end;
+      padding: 1.2rem;
+    }
+
+    .card:hover .card-overlay { opacity: 1; }
+
+    .card-meta {
+      color: #f5f4f0;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      line-height: 1.7;
+    }
+
+    .card-meta span {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      letter-spacing: 0;
+      text-transform: none;
+      font-style: italic;
+    }
+
+    .card-num {
+      position: absolute;
+      top: .9rem;
+      right: .9rem;
+      font-size: .6rem;
+      letter-spacing: .12em;
+      color: rgba(245,244,240,.55);
+      transition: color .3s;
+    }
+
+    .card:hover .card-num { color: rgba(245,244,240,.9); }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,25,23,.93);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+      padding: 2rem;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .lightbox-img {
+      width: 100%;
+      border-radius: var(--radius);
+      display: block;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .lightbox-caption {
+      margin-top: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(245,244,240,.6);
+      font-size: .65rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .lightbox-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: #f5f4f0;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .lb-close, .lb-prev, .lb-next {
+      position: absolute;
+      background: none;
+      border: 1px solid rgba(245,244,240,.25);
+      color: rgba(245,244,240,.7);
+      font-family: 'Geist Mono', monospace;
+      font-size: .75rem;
+      cursor: pointer;
+      border-radius: var(--radius);
+      padding: .5rem .9rem;
+      transition: all .2s;
+      letter-spacing: .08em;
+    }
+
+    .lb-close:hover, .lb-prev:hover, .lb-next:hover {
+      background: rgba(245,244,240,.1);
+      color: #f5f4f0;
+    }
+
+    .lb-close { top: -3rem; right: 0; }
+    .lb-prev  { top: 50%; left: -3.5rem; transform: translateY(-50%); }
+    .lb-next  { top: 50%; right: -3.5rem; transform: translateY(-50%); }
+
+    @media (max-width: 700px) {
+      .lb-prev, .lb-next { display: none; }
+      .lb-close { top: auto; bottom: -3.2rem; right: 50%; transform: translateX(50%); }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 1.8rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: .62rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .footer-dot::before { content: '·'; margin: 0 .5rem; }
+
+    /* placeholder shimmer while images load */
+    .card img[src=""] {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Galería<br/><em>Fotografía</em></h1>
+  </div>
+  <div class="header-right">
+    Nicolás Rodríguez Granados<br/>
+    20241020037<br/>
+    Universidad Distrital<br/>
+    Francisco José de Caldas
+  </div>
+</header>
+
+<div class="filter-bar">
+  <span class="filter-label">Filtrar</span>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Todas</button>
+    <button class="filter-btn" data-filter="paisaje">Paisaje</button>
+    <button class="filter-btn" data-filter="retrato">Retrato</button>
+    <button class="filter-btn" data-filter="urbano">Urbano</button>
+    <button class="filter-btn" data-filter="naturaleza">Naturaleza</button>
+  </div>
+</div>
+
+<main>
+  <div class="gallery" id="gallery">
+    <!--
+      ════════════════════════════════════════════════════════════
+      INSTRUCCIONES PARA AGREGAR TUS FOTOS:
+      ─────────────────────────────────────────────────────────
+      1. Pon tus 10 imágenes en la misma carpeta que este index.html
+      2. Reemplaza cada src="foto-01.jpg" con el nombre real de tu archivo
+      3. Edita el data-tag con la categoría: paisaje | retrato | urbano | naturaleza
+      4. Edita el data-title con el título de la foto
+      5. Edita el data-date con la fecha que quieras mostrar
+      ════════════════════════════════════════════════════════════
+    -->
+    <div class="card" data-tag="paisaje"   data-title="Sin título 01" data-date="2025">
+      <img src="foto-01.jpg" alt="Foto 01" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 01</span>
+          Paisaje · 2025
+        </div>
+      </div>
+      <div class="card-num">01 / 10</div>
+    </div>
+
+    <div class="card" data-tag="retrato"   data-title="Sin título 02" data-date="2025">
+      <img src="foto-02.jpg" alt="Foto 02" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 02</span>
+          Retrato · 2025
+        </div>
+      </div>
+      <div class="card-num">02 / 10</div>
+    </div>
+
+    <div class="card" data-tag="urbano"    data-title="Sin título 03" data-date="2025">
+      <img src="foto-03.jpg" alt="Foto 03" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 03</span>
+          Urbano · 2025
+        </div>
+      </div>
+      <div class="card-num">03 / 10</div>
+    </div>
+
+    <div class="card" data-tag="naturaleza" data-title="Sin título 04" data-date="2025">
+      <img src="foto-04.jpg" alt="Foto 04" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 04</span>
+          Naturaleza · 2025
+        </div>
+      </div>
+      <div class="card-num">04 / 10</div>
+    </div>
+
+    <div class="card" data-tag="paisaje"   data-title="Sin título 05" data-date="2025">
+      <img src="foto-05.jpg" alt="Foto 05" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 05</span>
+          Paisaje · 2025
+        </div>
+      </div>
+      <div class="card-num">05 / 10</div>
+    </div>
+
+    <div class="card" data-tag="retrato"   data-title="Sin título 06" data-date="2025">
+      <img src="foto-06.jpg" alt="Foto 06" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 06</span>
+          Retrato · 2025
+        </div>
+      </div>
+      <div class="card-num">06 / 10</div>
+    </div>
+
+    <div class="card" data-tag="urbano"    data-title="Sin título 07" data-date="2025">
+      <img src="foto-07.jpg" alt="Foto 07" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 07</span>
+          Urbano · 2025
+        </div>
+      </div>
+      <div class="card-num">07 / 10</div>
+    </div>
+
+    <div class="card" data-tag="naturaleza" data-title="Sin título 08" data-date="2025">
+      <img src="foto-08.jpg" alt="Foto 08" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 08</span>
+          Naturaleza · 2025
+        </div>
+      </div>
+      <div class="card-num">08 / 10</div>
+    </div>
+
+    <div class="card" data-tag="paisaje"   data-title="Sin título 09" data-date="2025">
+      <img src="foto-09.jpg" alt="Foto 09" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 09</span>
+          Paisaje · 2025
+        </div>
+      </div>
+      <div class="card-num">09 / 10</div>
+    </div>
+
+    <div class="card" data-tag="retrato"   data-title="Sin título 10" data-date="2025">
+      <img src="foto-10.jpg" alt="Foto 10" loading="lazy"/>
+      <div class="card-overlay">
+        <div class="card-meta">
+          <span>Sin título 10</span>
+          Retrato · 2025
+        </div>
+      </div>
+      <div class="card-num">10 / 10</div>
+    </div>
+  </div>
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lb-close" id="lbClose">ESC</button>
+    <button class="lb-prev"  id="lbPrev">←</button>
+    <button class="lb-next"  id="lbNext">→</button>
+    <img class="lightbox-img" id="lbImg" src="" alt=""/>
+    <div class="lightbox-caption">
+      <span class="lightbox-title" id="lbTitle"></span>
+      <span id="lbMeta"></span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Nicolás Rodríguez Granados<span class="footer-dot"></span>20241020037</span>
+  <span>Universidad Distrital Francisco José de Caldas</span>
+</footer>
+
+<script>
+  /* ── FILTER ── */
+  const btns  = document.querySelectorAll('.filter-btn');
+  const cards = [...document.querySelectorAll('.card')];
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      cards.forEach(c => {
+        const show = f === 'all' || c.dataset.tag === f;
+        c.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  /* ── LIGHTBOX ── */
+  const lb      = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lbImg');
+  const lbTitle = document.getElementById('lbTitle');
+  const lbMeta  = document.getElementById('lbMeta');
+
+  let currentIdx = 0;
+  let visibleCards = () => cards.filter(c => c.style.display !== 'none');
+
+  function openLightbox(idx) {
+    const vc = visibleCards();
+    if (!vc[idx]) return;
+    currentIdx = idx;
+    const card  = vc[idx];
+    const img   = card.querySelector('img');
+    lbImg.src      = img.src;
+    lbImg.alt      = img.alt;
+    lbTitle.textContent = card.dataset.title;
+    lbMeta.textContent  = `${card.dataset.tag} · ${card.dataset.date} · ${idx+1}/${vc.length}`;
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  cards.forEach((card, i) => {
+    card.addEventListener('click', () => {
+      const vc  = visibleCards();
+      const idx = vc.indexOf(card);
+      if (idx !== -1) openLightbox(idx);
+    });
+  });
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', () => {
+    const vc = visibleCards();
+    openLightbox((currentIdx - 1 + vc.length) % vc.length);
+  });
+  document.getElementById('lbNext').addEventListener('click', () => {
+    const vc = visibleCards();
+    openLightbox((currentIdx + 1) % vc.length);
+  });
+
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  document.getElementById('lbPrev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+  });
+</script>
+</body>
+</html>
